@@ -13,7 +13,7 @@ const app = express();
 
 app.use(cors());
 
-app.use(express.static(path.join(__dirname, "..", "client", "build")));
+//app.use(express.static(path.join(__dirname, "..", "client", "build")));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
@@ -22,6 +22,18 @@ app.listen(PORT, () => {
 // app.get("/", (req, res) => {
 //   res.redirect("http://localhost:3000/");
 // });
+
+app.get(
+  "/search/:url(*)",
+  asyncHandler(async (req, res) => {
+    var url = req.params.url;
+    var exists = await databaseLayer.ifExist(url);
+    console.log(exists);
+    res.json({
+      repeat: exists,
+    });
+  })
+);
 
 app.get(
   "/getAll",
