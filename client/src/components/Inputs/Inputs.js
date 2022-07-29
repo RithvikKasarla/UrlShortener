@@ -11,7 +11,62 @@ class Inputs extends React.Component {
     };
   }
 
+  saveBack(link, code) {
+    fetch(`/auth/${code}/${link}`)
+      .then((data) => {
+        return data.json();
+      })
+      .then((results) => {});
+  }
+
   save(link, code) {
+    var splits;
+    var starts;
+
+    ({ splits, starts, link } = this.normalize(link));
+
+    var validURL, uniqueCode, uniqueLink;
+
+    validURL = this.validateformat(splits, starts, true);
+    alert("valid? " + validURL);
+    if (!validURL) {
+      this.setState({ LinkErrorMessage: "Not a Valid URL" });
+      return;
+    }
+    alert("validURL" + validURL);
+    fetch(`/checkunique/${this.state.code}/${link}`)
+      .then((data) => {
+        return data.json();
+      })
+      .then((results) => {
+        var uniqueLink = !results.repeatLink;
+        if (!uniqueLink) {
+          this.setState({ LinkErrorMessage: "URL already exists" });
+        }
+        var uniqueCode = !results.repeatCode;
+        if (!uniqueCode) {
+          this.setState({ CodeErrorMessage: "Code Already in Use" });
+        }
+      });
+
+    if (uniqueLink && uniqueCode) {
+      document.getElementById("form").reset();
+      return fetch(`/${code}/gen/${link}`).then(({ results }) =>
+        this.setState({ backendData: results })
+      );
+    }
+  }
+
+  validateformat(splits, starts, validURL) {
+    if (!(splits[starts].split(".")[0] === "www")) {
+      validURL = false;
+    } else if (!(splits[starts].split(".")[2] === "com")) {
+      validURL = false;
+    }
+    return validURL;
+  }
+
+  normalize(link) {
     var splits = link.split("/");
     var starts = 1;
     if (!(splits[0] === "https:") && !(splits[0] === "http:")) {
@@ -24,44 +79,7 @@ class Inputs extends React.Component {
     if (index > -1) {
       splits.splice(index, 1);
     }
-    var validURL, validCode;
-    fetch(`/search/${link}`)
-      .then((data) => {
-        return data.json();
-      })
-      .then((results) => {
-        var validURL = !results.repeat;
-        if (validURL) {
-          if (!(splits[starts].split(".")[0] === "www")) {
-            validURL = false;
-          } else if (!(splits[starts].split(".")[2] === "com")) {
-            validURL = false;
-          }
-
-          if (!validURL) {
-            this.setState({ LinkErrorMessage: "Not a Valid URL" });
-          }
-        } else {
-          this.setState({ LinkErrorMessage: "URL already exists" });
-        }
-      });
-    fetch(`/searchCode/${this.state.code}`)
-      .then((data) => {
-        return data.json();
-      })
-      .then((results) => {
-        var validCode = !results.repeat;
-        if (validCode) {
-          this.setState({ CodeErrorMessage: "Code Already in Use" });
-        }
-      });
-
-    if (validURL && validCode) {
-      document.getElementById("form").reset();
-      return fetch(`/${code}/gen/${link}`).then(({ results }) =>
-        this.setState({ backendData: results })
-      );
-    }
+    return { splits, starts, link };
   }
 
   render() {

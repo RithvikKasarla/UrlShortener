@@ -24,19 +24,21 @@ app.listen(PORT, () => {
 // });
 
 app.get(
-  "/search/:url(*)",
+  "/checkunique/:code/:url(*)",
   asyncHandler(async (req, res) => {
     var url = req.params.url;
-    var exists = await databaseLayer.ifExist(url);
-    console.log(exists);
+    var code = req.params.code;
+    var iflinkexists = await databaseLayer.ifExist(url);
+    var ifCodeExist = await databaseLayer.ifCodeExist(code);
     res.json({
-      repeat: exists,
+      repeatLink: iflinkexists,
+      repeatCode: ifCodeExist,
     });
   })
 );
 
 app.get(
-  "/searchCode/:code",
+  "/check/:code",
   asyncHandler(async (req, res) => {
     var code = req.params.code;
     var exists = await databaseLayer.ifCodeExist(code);
