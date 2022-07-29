@@ -53,6 +53,22 @@ async function ifExist(url) {
   return ret;
 }
 
+async function ifCodeExist(code) {
+  console.log(code);
+  var ret = true;
+  try {
+    var urlMap = await urlMapModel.findOne({ code });
+  } catch (error) {
+    if (error) {
+      ret = false;
+    }
+  }
+  if (urlMap === null) {
+    ret = false;
+  }
+  return ret;
+}
+
 function addToDB(url, key) {
   var urlMap = new urlMapModel({ url, code: key });
   urlMap.save(function (err) {
@@ -72,4 +88,5 @@ module.exports = {
   add,
   getAll,
   ifExist,
+  ifCodeExist,
 };

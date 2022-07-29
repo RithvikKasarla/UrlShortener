@@ -13,7 +13,7 @@ const app = express();
 
 app.use(cors());
 
-//app.use(express.static(path.join(__dirname, "..", "client", "build")));
+app.use(express.static(path.join(__dirname, "..", "client", "build")));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
@@ -32,6 +32,15 @@ app.get(
     res.json({
       repeat: exists,
     });
+  })
+);
+
+app.get(
+  "/searchCode/:code",
+  asyncHandler(async (req, res) => {
+    var code = req.params.code;
+    var exists = await databaseLayer.ifCodeExist(code);
+    res.json({ exists: exists });
   })
 );
 
