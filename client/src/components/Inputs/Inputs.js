@@ -16,7 +16,7 @@ class Inputs extends React.Component {
       .then((data) => {
         return data.json();
       })
-      .then((results) => { });
+      .then((results) => {});
   }
 
   save(link, code) {
@@ -48,6 +48,8 @@ class Inputs extends React.Component {
       });
 
     if (uniqueLink && uniqueCode) {
+      this.setState({ LinkErrorMessage: "" });
+      this.setState({ CodeErrorMessage: "" });
       document.getElementById("form").reset();
       return fetch(`/${code}/gen/${link}`).then(({ results }) =>
         this.setState({ backendData: results })
