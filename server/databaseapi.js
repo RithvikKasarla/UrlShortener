@@ -17,15 +17,13 @@ var urlMapModel = mongoose.model("Urls", urlMapSchema);
 async function retrieve(key) {
   var urlMap = await urlMapModel.findOne({ code: key });
   if (urlMap === null) {
-    console.log("ERROR 404");
     return "Error 404";
   }
-  console.log(`URLMAP ${urlMap}`);
   return urlMap;
 }
 
 function add(url, key) {
-  urlMapModel.findOne({ code: key }, function (err, urlMap) {
+  urlMapModel.findOne({ code: key }, function(err, urlMap) {
     if (err) {
       return true;
     } else if (urlMap === null) {
@@ -37,7 +35,6 @@ function add(url, key) {
 }
 
 async function ifExist(url) {
-  console.log(url);
   var ret = true;
   try {
     var urlMap = await urlMapModel.findOne({ url });
@@ -54,7 +51,6 @@ async function ifExist(url) {
 }
 
 async function ifCodeExist(code) {
-  console.log(code);
   var ret = true;
   try {
     var urlMap = await urlMapModel.findOne({ code });
@@ -71,7 +67,7 @@ async function ifCodeExist(code) {
 
 function addToDB(url, key) {
   var urlMap = new urlMapModel({ url, code: key });
-  urlMap.save(function (err) {
+  urlMap.save(function(err) {
     if (err) {
       return handleError(err);
     }

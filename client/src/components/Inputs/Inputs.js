@@ -16,7 +16,7 @@ class Inputs extends React.Component {
       .then((data) => {
         return data.json();
       })
-      .then((results) => {});
+      .then((results) => { });
   }
 
   save(link, code) {
@@ -28,12 +28,10 @@ class Inputs extends React.Component {
     var validURL, uniqueCode, uniqueLink;
 
     validURL = this.validateformat(splits, starts, true);
-    alert("valid? " + validURL);
     if (!validURL) {
       this.setState({ LinkErrorMessage: "Not a Valid URL" });
       return;
     }
-    alert("validURL" + validURL);
     fetch(`/checkunique/${this.state.code}/${link}`)
       .then((data) => {
         return data.json();
@@ -72,7 +70,6 @@ class Inputs extends React.Component {
     if (!(splits[0] === "https:") && !(splits[0] === "http:")) {
       link = "https://" + link;
       starts = 0;
-      console.log("added HTTPS://");
     }
     const index = splits.indexOf("");
 
