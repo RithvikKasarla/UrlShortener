@@ -24,6 +24,7 @@ import QuerySearch from "./components/QuerySearch/QuerySearch";
 // }
 
 function App() {
+  const basename = process.env.REACT_APP_BASENAME || null;
   var [query, setQuery] = useState("");
 
   return (
