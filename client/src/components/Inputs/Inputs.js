@@ -12,7 +12,7 @@ class Inputs extends React.Component {
   }
 
   saveBack(link, code) {
-    fetch(`/auth/${code}/${link}`)
+    fetch(`./auth/${code}/${link}`)
       .then((data) => {
         return data.json();
       })
@@ -32,7 +32,7 @@ class Inputs extends React.Component {
       this.setState({ LinkErrorMessage: "Not a Valid URL" });
       return;
     }
-    fetch(`/checkunique/${this.state.code}/${link}`)
+    fetch(`./checkunique/${this.state.code}/${link}`)
       .then((data) => {
         return data.json();
       })
@@ -51,7 +51,7 @@ class Inputs extends React.Component {
       this.setState({ LinkErrorMessage: "" });
       this.setState({ CodeErrorMessage: "" });
       document.getElementById("form").reset();
-      return fetch(`/${code}/gen/${link}`).then(({ results }) =>
+      return fetch(`./${code}/gen/${link}`).then(({ results }) =>
         this.setState({ backendData: results })
       );
     }
