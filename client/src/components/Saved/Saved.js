@@ -5,7 +5,7 @@ function Saved(props) {
   var [data, setData] = useState([{ url: "", code: "" }]);
   var FilterQuery = "";
   useEffect((data) => {
-    var url = `/getAll`;
+    var url = `./getAll`;
 
     axios
       .get(url)
