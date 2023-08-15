@@ -16,60 +16,50 @@ var urlMapModel = mongoose.model("Urls", urlMapSchema);
 
 async function retrieve(key) {
   var urlMap = await urlMapModel.findOne({ code: key });
-  if (urlMap === null) {
+  if (!urlMap) {
     return "Error 404";
   }
   return urlMap;
 }
 
-function add(url, key) {
-  urlMapModel.findOne({ code: key }, function(err, urlMap) {
-    if (err) {
-      return true;
-    } else if (urlMap === null) {
-      addToDB(url, key);
-      return false;
+async function add(url, key) {
+  try {
+    var urlMap = await urlMapModel.findOne({ code: key });
+    if (!urlMap) {
+      await addToDB(url, key);
     }
     return true;
-  });
+  } catch (error) {
+    console.error("Error adding to DB:", error);
+    return false;
+  }
 }
 
 async function ifExist(url) {
-  var ret = true;
   try {
     var urlMap = await urlMapModel.findOne({ url });
+    return !!urlMap;
   } catch (error) {
-    if (error) {
-      ret = false;
-    }
+    console.error("Error checking if URL exists:", error);
+    return false;
   }
-
-  if (urlMap === null) {
-    ret = false;
-  }
-  return ret;
 }
 
 async function ifCodeExist(code) {
-  var ret = true;
   try {
     var urlMap = await urlMapModel.findOne({ code });
+    return !!urlMap;
   } catch (error) {
-    if (error) {
-      ret = false;
-    }
+    console.error("Error checking if code exists:", error);
+    return false;
   }
-  if (urlMap === null) {
-    ret = false;
-  }
-  return ret;
 }
 
 function addToDB(url, key) {
   var urlMap = new urlMapModel({ url, code: key });
-  urlMap.save(function(err) {
+  urlMap.save(function (err) {
     if (err) {
-      return handleError(err);
+      console.error("Error saving to DB:", err);
     }
   });
 }

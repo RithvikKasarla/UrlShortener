@@ -19,10 +19,6 @@ app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-// app.get("/", (req, res) => {
-//   res.redirect("http://localhost:3000/");
-// });
-
 app.get(
   "/checkunique/:code/:url(*)",
   asyncHandler(async (req, res) => {

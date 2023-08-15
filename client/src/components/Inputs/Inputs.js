@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import "./Inputs.css";
-class Inputs extends React.Component {
+
+class Inputs extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,13 +12,14 @@ class Inputs extends React.Component {
     };
   }
 
-  saveBack(link, code) {
-    fetch(`./auth/${code}/${link}`)
-      .then((data) => {
-        return data.json();
-      })
-      .then((results) => {});
-  }
+  handleInputChange = (e, field) => {
+    this.setState({ [field]: e.target.value });
+  };
+
+  handleShortenClick = () => {
+    console.log("SAVING");
+    this.save(this.state.link, this.state.code);
+  };
 
   save(link, code) {
     var splits;
@@ -32,29 +34,56 @@ class Inputs extends React.Component {
       this.setState({ LinkErrorMessage: "Not a Valid URL" });
       return;
     }
+
+    // fetch(`./checkunique/${this.state.code}/${link}`)
+    //   .then((data) => {
+    //     console.log("data retrieved");
+    //     return data.json();
+    //   })
+    //   .then((results) => {
+    //     console.log(results);
+    //     var uniqueLink = !results.repeatLink;
+    //     if (!uniqueLink) {
+    //       this.setState({ LinkErrorMessage: "URL already exists" });
+    //     }
+    //     var uniqueCode = !results.repeatCode;
+    //     if (!uniqueCode) {
+    //       this.setState({ CodeErrorMessage: "Code Already in Use" });
+    //     }
+    //   });
+
+    //   if (uniqueLink && uniqueCode) {
+    //   this.setState({ LinkErrorMessage: "" });
+    //   this.setState({ CodeErrorMessage: "" });
+    //   document.getElementById("form").reset();
+    //   return fetch(`./${code}/gen/${link}`).then(({ results }) =>
+    //     this.setState({ backendData: results })
+    //   );
+    // }
     fetch(`./checkunique/${this.state.code}/${link}`)
       .then((data) => {
+        console.log("data retrieved");
         return data.json();
       })
       .then((results) => {
-        var uniqueLink = !results.repeatLink;
+        console.log(results);
+        uniqueLink = !results.repeatLink;
+        uniqueCode = !results.repeatCode;
+
         if (!uniqueLink) {
           this.setState({ LinkErrorMessage: "URL already exists" });
-        }
-        var uniqueCode = !results.repeatCode;
-        if (!uniqueCode) {
+        } else if (!uniqueCode) {
           this.setState({ CodeErrorMessage: "Code Already in Use" });
+        } else {
+          this.setState({ LinkErrorMessage: "" });
+          this.setState({ CodeErrorMessage: "" });
+          document.getElementById("form").reset();
+          console.log(":O");
+          return fetch(`./${code}/gen/${link}`).then(({ results }) =>
+            this.setState({ backendData: results })
+          );
         }
       });
-
-    if (uniqueLink && uniqueCode) {
-      this.setState({ LinkErrorMessage: "" });
-      this.setState({ CodeErrorMessage: "" });
-      document.getElementById("form").reset();
-      return fetch(`./${code}/gen/${link}`).then(({ results }) =>
-        this.setState({ backendData: results })
-      );
-    }
   }
 
   validateformat(splits, starts, validURL) {
@@ -83,40 +112,32 @@ class Inputs extends React.Component {
 
   render() {
     return (
-      <>
+      <div className="inputs-container">
         <form id="form">
           <input
             type="text"
             placeholder="Place link here"
-            class="border-2 border-black rounded-[5px]"
-            onChange={(e) => {
-              var link = e.target.value;
-              this.setState({ link });
-            }}
+            className="input-field"
+            onChange={(e) => this.handleInputChange(e, "link")}
           />
           <input
             type="text"
             placeholder="Place code here"
-            class="border-2 border-black rounded-[5px]"
-            onChange={(e) => {
-              var code = e.target.value;
-              this.setState({ code });
-            }}
+            className="input-field"
+            onChange={(e) => this.handleInputChange(e, "code")}
           />
         </form>
 
         <button
           type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-2 rounded"
-          onClick={() => {
-            this.save(this.state.link, this.state.code);
-          }}
+          className="shorten-button"
+          onClick={this.handleShortenClick}
         >
           Shorten
         </button>
-        <p className="message">{this.state.LinkErrorMessage}</p>
-        <p className="message">{this.state.CodeErrorMessage}</p>
-      </>
+        <p className="error-message">{this.state.LinkErrorMessage}</p>
+        <p className="error-message">{this.state.CodeErrorMessage}</p>
+      </div>
     );
   }
 }
